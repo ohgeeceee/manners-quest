@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manners Quest</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 340px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f0d1a;
+      color: #e2e0f0;
+      padding: 16px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .header .icon { font-size: 28px; }
+    .header h1 { font-size: 18px; font-weight: 700; color: #fff; }
+    .header .sub { font-size: 11px; color: #8b87a0; }
+
+    .level-card {
+      background: linear-gradient(135deg, #1e1b2e 0%, #2a2540 100%);
+      border: 1px solid #3d3654;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .level-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .level-name { font-size: 14px; font-weight: 600; color: #a78bfa; }
+    .level-xp { font-size: 12px; color: #8b87a0; }
+    .progress-bar {
+      height: 8px;
+      background: #1a1728;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    .progress-text {
+      font-size: 11px;
+      color: #6b6780;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .stat-box {
+      background: #1a1728;
+      border: 1px solid #2d2844;
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .stat-num { font-size: 18px; font-weight: 700; color: #fff; }
+    .stat-label { font-size: 10px; color: #6b6780; margin-top: 2px; }
+
+    .streak-card {
+      background: linear-gradient(135deg, #1e1b2e 0%, #2a2540 100%);
+      border: 1px solid #3d3654;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .streak-left { display: flex; align-items: center; gap: 8px; }
+    .streak-icon { font-size: 22px; }
+    .streak-info .streak-num { font-size: 16px; font-weight: 700; color: #f97316; }
+    .streak-info .streak-label { font-size: 11px; color: #8b87a0; }
+    .streak-best { text-align: right; }
+    .streak-best .best-num { font-size: 14px; font-weight: 600; color: #a78bfa; }
+    .streak-best .best-label { font-size: 10px; color: #6b6780; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b6780;
+      margin-bottom: 8px;
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .badge-item {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .badge-item:hover { transform: scale(1.1); }
+    .badge-earned {
+      background: linear-gradient(135deg, #2a2540, #3d3654);
+      border: 1px solid #7c3aed;
+    }
+    .badge-locked {
+      background: #1a1728;
+      border: 1px solid #2d2844;
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+    .badge-item .tooltip {
+      display: none;
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2a2540;
+      border: 1px solid #3d3654;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 10px;
+      white-space: nowrap;
+      z-index: 10;
+      color: #e2e0f0;
+      pointer-events: none;
+    }
+    .badge-item:hover .tooltip { display: block; }
+
+    .today-card {
+      background: #1a1728;
+      border: 1px solid #2d2844;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .today-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 3px 0;
+    }
+    .today-row .label { color: #8b87a0; }
+    .today-row .value { color: #e2e0f0; font-weight: 500; }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .toggle-label { font-size: 13px; color: #c4c1d4; }
+    .toggle {
+      width: 36px;
+      height: 20px;
+      background: #2d2844;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle.active { background: #7c3aed; }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: left 0.2s;
+    }
+    .toggle.active::after { left: 18px; }
+
+    .dashboard-link {
+      display: block;
+      text-align: center;
+      font-size: 12px;
+      color: #a78bfa;
+      text-decoration: none;
+      padding: 8px;
+      border: 1px solid #3d3654;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .dashboard-link:hover { background: #1a1728; }
+
+    .new-badge-toast {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="icon">🎩</span>
+    <div>
+      <h1>Manners Quest</h1>
+      <div class="sub">Polite AI, gamified</div>
+    </div>
+  </div>
+
+  <div id="newBadges"></div>
+
+  <div class="level-card">
+    <div class="level-row">
+      <span class="level-name" id="levelName">Newcomer</span>
+      <span class="level-xp" id="levelXp">0 / 50 XP</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+    <div class="progress-text" id="progressText">Level 1</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-num" id="statPolite">0</div>
+      <div class="stat-label">Polite</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statPlease">0</div>
+      <div class="stat-label">Please</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statThank">0</div>
+      <div class="stat-label">Thanks</div>
+    </div>
+  </div>
+
+  <div class="streak-card">
+    <div class="streak-left">
+      <span class="streak-icon">🔥</span>
+      <div class="streak-info">
+        <div class="streak-num" id="streakNum">0</div>
+        <div class="streak-label">Day Streak</div>
+      </div>
+    </div>
+    <div class="streak-best">
+      <div class="best-num" id="bestStreak">0</div>
+      <div class="best-label">Best</div>
+    </div>
+  </div>
+
+  <div class="section-title">Today</div>
+  <div class="today-card">
+    <div class="today-row"><span class="label">Polite messages</span><span class="value" id="todayPolite">0</span></div>
+    <div class="today-row"><span class="label">Please used</span><span class="value" id="todayPlease">0</span></div>
+    <div class="today-row"><span class="label">Thanks used</span><span class="value" id="todayThank">0</span></div>
+    <div class="today-row"><span class="label">Perfect (both)</span><span class="value" id="todayPerfect">0</span></div>
+  </div>
+
+  <div class="section-title">Badges <span id="badgeCount" style="color: #7c3aed;"></span></div>
+  <div class="badges-grid" id="badgesGrid"></div>
+
+  <div class="toggle-row">
+    <span class="toggle-label">Auto-politeness</span>
+    <div class="toggle active" id="toggleBtn"></div>
+  </div>
+
+  <a href="#" class="dashboard-link" id="dashboardLink">Open Dashboard →</a>
+
+  <script src="../shared/polite-engine.js"></script>
+  <script src="../shared/gamification.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
