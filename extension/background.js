@@ -3,6 +3,8 @@
 // Handles badge notifications and extension icon updates.
 // ============================================================
 
+importScripts('polite-engine.js', 'gamification.js');
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'MQ_MESSAGE_RECORDED') {
     updateBadge(message.state);

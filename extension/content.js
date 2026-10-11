@@ -10,13 +10,10 @@
   let config = { enabled: true, prefix: 'Please. ', suffix: ' Thank you.' };
 
   // ---- Load persisted state ----
-  chrome.storage.sync.get('mq_state', (data) => {
+  chrome.storage.sync.get(['mq_state', 'mq_config'], (data) => {
     if (data.mq_state) {
       state = { ...Gamification.defaultState(), ...data.mq_state };
     }
-  });
-
-  chrome.storage.sync.get('mq_config', (data) => {
     if (data.mq_config) {
       config = { ...config, ...data.mq_config };
     }
@@ -33,6 +30,10 @@
     const tag = el.tagName;
     if (tag === 'TEXTAREA' || tag === 'INPUT') return true;
     if (el.isContentEditable) return true;
+    // Check for contenteditable attribute
+    if (el.getAttribute && el.getAttribute('contenteditable') === 'true') return true;
+    // Check for role="textbox"
+    if (el.getAttribute && el.getAttribute('role') === 'textbox') return true;
     return false;
   }
 
@@ -93,8 +94,12 @@
     if (e.key !== 'Enter') return;
     if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) return;
 
-    const el = e.target;
-    if (!isEditable(el)) return;
+    let el = e.target;
+    if (!isEditable(el)) {
+      // Walk up to find editable ancestor (contenteditable children)
+      el = e.target.closest?.('[contenteditable="true"], textarea, input, [role="textbox"]');
+      if (!el) return;
+    }
 
     const original = readValue(el);
     if (!original.trim()) return;
@@ -118,8 +123,11 @@
   // ---- Click handler for send buttons (backup) ----
   document.addEventListener('click', function (e) {
     if (!config.enabled) return;
-    const el = e.target;
-    if (!isEditable(el)) return;
+    let el = e.target;
+    if (!isEditable(el)) {
+      el = e.target.closest?.('[contenteditable="true"], textarea, input, [role="textbox"]');
+      if (!el) return;
+    }
 
     const original = readValue(el);
     if (!original.trim()) return;
@@ -140,4 +148,8 @@
       config = { ...config, ...changes.mq_config.newValue };
     }
   });
+
+  // ---- Debug logging ----
+  console.log('[Manners Quest] Content script loaded on', location.hostname);
+  console.log('[Manners Quest] Auto-politeness:', config.enabled ? 'ON' : 'OFF');
 })();

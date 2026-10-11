@@ -6,6 +6,7 @@
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
     "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
     "https://claude.ai/*",
     "https://gemini.google.com/*",
     "https://www.perplexity.ai/*",
@@ -13,7 +14,12 @@
     "https://you.com/*",
     "https://poe.com/*",
     "https://bing.com/*",
-    "https://huggingface.co/*"
+    "https://www.bing.com/*",
+    "https://huggingface.co/*",
+    "https://cursor.com/*",
+    "https://windsurf.com/*",
+    "https://v0.dev/*",
+    "https://bolt.new/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -22,6 +28,7 @@
     {
       "matches": [
         "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
         "https://claude.ai/*",
         "https://gemini.google.com/*",
         "https://www.perplexity.ai/*",
@@ -29,9 +36,14 @@
         "https://you.com/*",
         "https://poe.com/*",
         "https://bing.com/*",
-        "https://huggingface.co/*"
+        "https://www.bing.com/*",
+        "https://huggingface.co/*",
+        "https://cursor.com/*",
+        "https://windsurf.com/*",
+        "https://v0.dev/*",
+        "https://bolt.new/*"
       ],
-      "js": ["../shared/polite-engine.js", "../shared/gamification.js", "content.js"],
+      "js": ["polite-engine.js", "gamification.js", "content.js"],
       "run_at": "document_idle"
     }
   ],
